@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+	
+	<meta charset="utf-8">
+    <meta name="description" content="Color Detector">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta id="theme-color" name="theme-color" content="#89e3d8">
+  
+    <title>Color Detection by Abhishek Rai</title>
+	<script src="color-thief.umd.js"></script>
+	<script src="p5.min.js"></script>
+	<script src="p5.dom.min.js"></script>
+	
+	<style>
+	div {height:30px;width:100%;}
+    </style>
+	
+  </head>
+  <body>
+    <p><strong>This is an example of color detection on Web.</strong></p>
+	<!-- <video id="video" width="0" height="0">Abhishek</video> -->
+	<!-- <img id="img" src="dog.jpg"> -->
+
+	<video playsinline autoplay></video>
+	<button>Take snapshot</button>
+	<canvas id="image_snap"></canvas>
+	<script>
+	const video = document.querySelector('video');
+	const canvas = window.canvas = document.querySelector('canvas');
+	canvas.width = 480;
+	canvas.height = 360;
+
+	const button = document.querySelector('button');
+
+	const constraints = {
+		audio: false,
+		video: true
+	};
+
+	function handleSuccess(stream) {
+	window.stream = stream; // make stream available to browser console
+	video.srcObject = stream;
+	}
+
+	function handleError(error) {
+		console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+	}
+	
+	navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+	
+	
+	const colorThief = new ColorThief();
+    const img = document.querySelector('canvas');
+	
+	var palette, dominantColor;
+	button.onclick= function() {
+		canvas.width = video.videoWidth;
+		canvas.height = video.videoHeight;
+		canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+		dominantColor = colorThief.getColor(img);
+		palette = colorThief.getPalette(img);
+		console.log("Colors in the image are given below");
+		console.log("Dominant Color is " + dominantColor);
+		for (i = 0; i < palette.length; i++) {
+			console.log(" Color " + i +" Palette is "+ palette[i])+ "<br>";
+		}
+		document.getElementById('maincolor').style.backgroundColor = "rgb(" +dominantColor+ ")";
+		document.getElementById('a').style.backgroundColor = "rgb(" +palette[0]+ ")"
+		document.getElementById('b').style.backgroundColor = "rgb(" +palette[1]+ ")"
+		document.getElementById('c').style.backgroundColor = "rgb(" +palette[2]+ ")"
+		document.getElementById('d').style.backgroundColor = "rgb(" +palette[3]+ ")"
+		document.getElementById('e').style.backgroundColor = "rgb(" +palette[4]+ ")"
+		document.getElementById('f').style.backgroundColor = "rgb(" +palette[5]+ ")"
+		document.getElementById('g').style.backgroundColor = "rgb(" +palette[6]+ ")"
+		document.getElementById('h').style.backgroundColor = "rgb(" +palette[7]+ ")"
+		document.getElementById('i').style.backgroundColor = "rgb(" +palette[8]+ ")"
+		document.getElementById('j').style.backgroundColor = "rgb(" +palette[9]+ ")"
+
+		
+		//console.log(" Color Palette is "+ palette);
+	};
+	
+    /*
+	// Make sure image is finished loading
+    if (img.complete) {
+      colorThief.getColor(img);
+	  console.log("complete 1");
+    } else {
+      //image.addEventListener('load', function() {
+      //  colorThief.getColor(img);
+      //});
+
+    }*/
+	//changebackground();
+	</script>
+	<div id="maincolor" style="background-color:rgb(0,0,0)"><h5 style="color:White; text-align:center;">Dominant Color</h5></div>
+	<div id="a" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 1</h6></div>
+	<div id="b" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 2</h6></div>
+	<div id="c" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 3</h6></div>
+	<div id="d" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 4</h6></div>
+	<div id="e" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 5</h6></div>
+	<div id="f" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 6</h6></div>
+	<div id="g" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 7</h6></div>
+	<div id="h" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 8</h6></div>
+	<div id="i" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 9</h6></div>
+	<div id="j" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 10</h6></div>
+
+  </body>
+</html>
