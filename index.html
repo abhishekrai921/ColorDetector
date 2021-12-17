@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+  <head>
+	
+	<meta charset="utf-8">
+    <meta name="description" content="Color Detector">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta id="theme-color" name="theme-color" content="#89e3d8">
+  
+    <title>Color Detection by Abhishek Rai</title>
+	<script src="color-thief.umd.js"></script>
+	<script src="p5.min.js"></script>
+	<script src="p5.dom.min.js"></script>
+	
+	<style>
+	div {height:30px;width:100%;}
+    </style>
+	
+  </head>
+  <body>
+    <p><strong>This is an example of color detection on Web.</strong></p>
+	<!-- <video id="video" width="0" height="0">Abhishek</video> -->
+	<!-- <img id="img" src="dog.jpg"> -->
+
+	<video playsinline autoplay></video>
+	<button>Take snapshot</button>
+	<canvas id="image_snap"></canvas>
+	<script type="text/javascript" src="ntc.js"></script>
+	<script>
+	const video = document.querySelector('video');
+	const canvas = window.canvas = document.querySelector('canvas');
+	canvas.width = 480;
+	canvas.height = 360;
+
+	const button = document.querySelector('button');
+
+	const constraints = {
+		audio: false,
+		video: {
+		width :{min: 480},
+		height :{min: 360},
+		facingMode: 'environment'}
+	};
+
+	function handleSuccess(stream) {
+	window.stream = stream; // make stream available to browser console
+	video.srcObject = stream;
+	}
+
+	function handleError(error) {
+		console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+	}
+	
+	navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+	
+	const colorThief = new ColorThief();
+    const img = document.querySelector('canvas');
+	
+	var palette, dominantColor;
+	button.onclick= function() {
+		canvas.width = video.videoWidth;
+		canvas.height = video.videoHeight;
+		canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+		dominantColor = colorThief.getColor(img);
+		palette = colorThief.getPalette(img);
+		console.log("Colors in the image are given below");
+		console.log("Dominant Color is " + dominantColor);
+		for (i = 0; i < palette.length; i++) {
+			console.log(" Color " + i +" Palette is "+ palette[i])+ "<br>";
+		}
+		//changes the color of div using js
+		document.getElementById('maincolor').style.backgroundColor = "rgb(" +dominantColor+ ")";
+		document.getElementById('a').style.backgroundColor = "rgb(" +palette[0]+ ")";
+		document.getElementById('b').style.backgroundColor = "rgb(" +palette[1]+ ")";
+		document.getElementById('c').style.backgroundColor = "rgb(" +palette[2]+ ")";
+		document.getElementById('d').style.backgroundColor = "rgb(" +palette[3]+ ")";
+		document.getElementById('e').style.backgroundColor = "rgb(" +palette[4]+ ")";
+		document.getElementById('f').style.backgroundColor = "rgb(" +palette[5]+ ")";
+		document.getElementById('g').style.backgroundColor = "rgb(" +palette[6]+ ")";
+		document.getElementById('h').style.backgroundColor = "rgb(" +palette[7]+ ")";
+		document.getElementById('i').style.backgroundColor = "rgb(" +palette[8]+ ")";
+		document.getElementById('j').style.backgroundColor = "rgb(" +palette[9]+ ")";
+		
+		
+
+		//For Dominant color conversion of RGB to Hex
+		r = dominantColor[0];
+		g = dominantColor[1];
+		b = dominantColor[2];
+		const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
+		const hex = x.toString(16)
+		return hex.length === 1 ? '0' + hex : hex
+		}).join('')
+		
+		//Name the color (dominant)
+		dominantColorHex = rgbToHex(r, g, b);
+		var dominantcolorname = ntc.name(dominantColorHex);
+		dominantcolorname_rgb = dominantcolorname[0]; // RGB value of closest match
+		dominantcolorname_name = dominantcolorname[1]; // Text string: Color name
+		dominantcolorname_name_exactmatch = dominantcolorname[2]; // True if exact color match
+		//console.log(dominantcolorname);
+
+		//change the text on div using js
+		document.getElementById('maincolor').innerHTML = "Dominant Color : " + dominantcolorname[1];
+		document.getElementById('maincolor').style.textAlign = "center";
+		document.getElementById('maincolor').style.textStyle = "Bold";
+		document.getElementById('maincolor').style.color = "White";
+		
+		//Convert palette colors to hex;
+		for (i = 0; i < palette.length; i++) {
+			r = palette[i][0];
+			g = palette[i][1];
+			b = palette[i][2];
+			const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
+			const hex = x.toString(16)
+			return hex.length === 1 ? '0' + hex : hex
+			}).join('')
+			
+			palette[i] = rgbToHex(r, g, b);
+		//Convert hex to color names;
+			palette[i] = ntc.name(palette[i]);
+		}
+		//change the text on div using js
+		document.getElementById('a').innerHTML = "Color 1 : " + palette[0][1];
+		document.getElementById('a').style.textAlign = "center";
+		document.getElementById('a').style.color = "White";
+		
+		document.getElementById('b').innerHTML = "Color 2 : " + palette[1][1];
+		document.getElementById('b').style.textAlign = "center";
+		document.getElementById('b').style.color = "White";
+		
+		document.getElementById('c').innerHTML = "Color 3 : " + palette[2][1];
+		document.getElementById('c').style.textAlign = "center";
+		document.getElementById('c').style.color = "White";
+		
+		document.getElementById('d').innerHTML = "Color 4 : " + palette[3][1];
+		document.getElementById('d').style.textAlign = "center";
+		document.getElementById('d').style.color = "White";
+		
+		document.getElementById('e').innerHTML = "Color 5 : " + palette[4][1];
+		document.getElementById('e').style.textAlign = "center";
+		document.getElementById('e').style.color = "White";
+		
+		document.getElementById('f').innerHTML = "Color 6 : " + palette[5][1];
+		document.getElementById('f').style.textAlign = "center";
+		document.getElementById('f').style.color = "White";
+		
+		document.getElementById('g').innerHTML = "Color 7 : " + palette[6][1];
+		document.getElementById('g').style.textAlign = "center";
+		document.getElementById('g').style.color = "White";
+		
+		document.getElementById('h').innerHTML = "Color 8 : " + palette[7][1];
+		document.getElementById('h').style.textAlign = "center";
+		document.getElementById('h').style.color = "White";
+		
+		document.getElementById('i').innerHTML = "Color 9 : " + palette[8][1];
+		document.getElementById('i').style.textAlign = "center";
+		document.getElementById('i').style.color = "White";
+
+		document.getElementById('j').innerHTML = "Color 10 : " + palette[9][1];
+		document.getElementById('j').style.textAlign = "center";
+		document.getElementById('j').style.color = "White";
+	
+
+	};
+	
+	</script>
+	<div id="maincolor" style="background-color:rgb(0,0,0) text-align:center text-color:rgb(255,255,255)">Dominant Color<br></div>
+	<div id="a" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 1</h6></div>
+	<div id="b" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 2</h6></div>
+	<div id="c" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 3</h6></div>
+	<div id="d" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 4</h6></div>
+	<div id="e" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 5</h6></div>
+	<div id="f" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 6</h6></div>
+	<div id="g" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 7</h6></div>
+	<div id="h" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 8</h6></div>
+	<div id="i" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 9</h6></div>
+	<div id="j" style="background-color:rgb(0,0,0)"><h6 style="color:White; text-align:center;">Palette Color 10</h6></div>
+
+  </body>
+</html>
